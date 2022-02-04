@@ -1,25 +1,56 @@
 package ru.dragulaxis.s7task.user;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table
+@Table(name = "users")
 public class User {
+
     @Id
-    Long id;
-    @Column
-    String name;
-    @Column
-    String password;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "username", unique = true)
+    private String username;
+
+    @Column(name = "password")
+    private String password;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name="friends",
+            joinColumns = {
+                    @JoinColumn(name="userId")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name="friendId")
+            }
+    )
+    private Set<User> friends;
+
+    public Set<User> getFriends() {
+        return this.friends;
+    }
+
+    public void setFriends(Set<User> friends) {
+        this.friends = friends;
+    }
+
+    public void addUserToFriends(User user) {
+        friends.add(user);
+    }
+
+    public void removeUserFromFriends(User user) {
+        friends.remove(user);
+    }
 
     public User() {
     }
 
-    public User(String name, String password) {
-        this.name = name;
+    public User(String username, String password) {
+        this.username = username;
         this.password = password;
     }
 
@@ -31,12 +62,12 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -45,5 +76,15 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", friends=" + friends +
+                '}';
     }
 }

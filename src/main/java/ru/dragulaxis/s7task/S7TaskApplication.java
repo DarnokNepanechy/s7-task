@@ -10,15 +10,14 @@ import java.sql.SQLException;
 
 @SpringBootApplication
 public class S7TaskApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(S7TaskApplication.class, args);
 	}
 
+	// H2 server bean
 	@Profile("dev")
 	@Bean(initMethod = "start", destroyMethod = "stop")
 	public Server h2Server() throws SQLException {
 		return Server.createTcpServer("-tcp","-tcpAllowOthers","-tcpPort","9092");
 	}
-
 }
