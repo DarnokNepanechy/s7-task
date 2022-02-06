@@ -11,6 +11,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.dragulaxis.s7task.config.SecurityConfig;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -48,7 +49,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     ) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
         // Алгоритм для подписи access и refresh токена. secret - ключ код
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        Algorithm algorithm = Algorithm.HMAC256(SecurityConfig.SECRET.getBytes());
         // создание токена доступа
         String access_token = JWT.create()
                 .withSubject(user.getUsername())

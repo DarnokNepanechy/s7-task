@@ -1,9 +1,5 @@
 package ru.dragulaxis.s7task.api;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +23,25 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok().body(userService.getAllUsers());
+    }
+
+    @GetMapping("/users/")
+    public ResponseEntity<List<String>> getAllUsersName() {
+        return ResponseEntity.ok().body(
+                userService.getAllUsers().stream()
+                        .map(User::getUsername)
+                        .toList()
+        );
+    }
+
+    @GetMapping("/users/{string}")
+    public ResponseEntity<List<String>> getUsersByString(@PathVariable String string) {
+        return ResponseEntity.ok().body(
+                userService.getAllUsers().stream()
+                        .map(User::getUsername)
+                        .filter(username -> username.toLowerCase().contains(string.toLowerCase()))
+                        .toList()
+        );
     }
 
     @PostMapping("/user/save")
@@ -79,6 +94,11 @@ public class UserController {
         } else {
             return false;
         }
+    }
+
+    @GetMapping("users/friends")
+    public List<String> getAllFriends(@RequestHeader("Authorization") String token) {
+        return userService.getUserFromToken(token).getFriends().stream().map(User::getUsername).toList();
     }
 
 }

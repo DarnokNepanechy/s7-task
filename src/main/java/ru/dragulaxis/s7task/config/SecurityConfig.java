@@ -1,4 +1,4 @@
-package ru.dragulaxis.s7task.security;
+package ru.dragulaxis.s7task.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +23,7 @@ import static org.springframework.http.HttpMethod.POST;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    public static final String SECRET = "secret";
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 

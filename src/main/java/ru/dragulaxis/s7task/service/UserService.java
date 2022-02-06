@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.dragulaxis.s7task.config.SecurityConfig;
 import ru.dragulaxis.s7task.entity.Role;
 import ru.dragulaxis.s7task.entity.User;
 import ru.dragulaxis.s7task.repository.RoleRepository;
@@ -106,7 +107,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User getUserFromToken(String token) {
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        Algorithm algorithm = Algorithm.HMAC256(SecurityConfig.SECRET.getBytes());
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT decodedJWT = verifier.verify(token);
         String username = decodedJWT.getSubject();
