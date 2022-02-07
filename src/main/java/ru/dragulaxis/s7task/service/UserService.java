@@ -5,7 +5,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,15 +18,11 @@ import ru.dragulaxis.s7task.entity.User;
 import ru.dragulaxis.s7task.repository.RoleRepository;
 import ru.dragulaxis.s7task.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-@Slf4j
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -38,10 +33,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
         if (user == null) {
-            log.error("User not found in the database");
             throw new UsernameNotFoundException("User not found in the database");
-        } else {
-            log.error("User found in the database: {}", username);
         }
 
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
@@ -52,18 +44,26 @@ public class UserService implements UserDetailsService {
     }
 
     public User saveUser(User user) {
-        log.info("Saving new user {} to the database", user.getUsername());
-        // кодирование пароля
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // добавление роли user по умолчанию
-        HashSet<Role> roles = new HashSet<>();
-        roles.add(roleRepository.findByName("ROLE_USER"));
-        user.setRoles(roles);
-        return userRepository.save(user);
+        if (
+                user.getUsername().matches("^[a-zA-Z0-9]+$") &&
+                user.getUsername().replaceAll("\\s+","").length() > 2 &&
+                user.getPassword().matches("^[a-zA-Z0-9]+$") &&
+                user.getUsername().replaceAll("\\s+","").length() > 2
+        ) {
+            // кодирование пароля
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            // добавление роли user по умолчанию
+            HashSet<Role> roles = new HashSet<>();
+            roles.add(roleRepository.findByName("ROLE_USER"));
+            user.setRoles(roles);
+            return userRepository.save(user);
+        } else {
+            return null;
+        }
+
     }
 
     public Role saveRole(Role role) {
-        log.info("Saving new role {} to the database", role.getName());
         return roleRepository.save(role);
     }
 
@@ -74,12 +74,10 @@ public class UserService implements UserDetailsService {
     }
 
     public User getUser(String name) {
-        log.info("Fetching user {}", name);
         return userRepository.findByUsername(name);
     }
 
     public List<User> getAllUsers() {
-        log.info("Fetching all users");
         return userRepository.findAll();
     }
 

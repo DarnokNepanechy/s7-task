@@ -19,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     // авторизация пользователя - ALL
-    // по адресу /login
+    // по адресу api/login
 
     // регистрация нового пользователя - ALL
     @PostMapping
@@ -104,7 +104,7 @@ public class UserController {
         return ResponseEntity.ok().body(userService.saveRole(newRole));
     }
 
-    // добавление роли к пользователю пользователя - ADMIN
+    // добавление роли к пользователю - ADMIN
     @PostMapping("/admin/role/add-to-user")
     public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form) {
         userService.addRoleToUser(form.getUsername(), form.getRoleName());
