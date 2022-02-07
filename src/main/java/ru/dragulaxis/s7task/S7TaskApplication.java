@@ -27,23 +27,20 @@ public class S7TaskApplication {
 		return new BCryptPasswordEncoder();
 	}
 
-	// Этот метод запускается после инициализации приложения - тут первоночальные данные
+	// Этот метод запускается после инициализации приложения - тут первоночальные данные для тестов
 	@Bean
 	CommandLineRunner run(UserService userService) {
 		return  args -> {
 			userService.saveRole(new Role(null, "ROLE_ADMIN"));
 			userService.saveRole(new Role(null, "ROLE_USER"));
 
-			userService.saveUser(new User(null, "JohnTravolta", "1234", new HashSet<>(), new HashSet<>()));
+			userService.saveUser(new User(null, "KanyeWest", "god", new HashSet<>(), new HashSet<>()));
 			userService.saveUser(new User(null, "WillSmith", "1234", new HashSet<>(), new HashSet<>()));
-			userService.saveUser(new User(null, "JimCarry", "1234", new HashSet<>(), new HashSet<>()));
-			userService.saveUser(new User(null, "ArnoldSchwarzenegger", "arnold", new HashSet<>(), new HashSet<>()));
+			userService.saveUser(new User(null, "JohnSnow", "1234", new HashSet<>(), new HashSet<>()));
+			userService.saveUser(new User(null, "JohnTravolta", "vincent", new HashSet<>(), new HashSet<>()));
 
-			userService.addRoleToUser("JohnTravolta", "ROLE_ADMIN");
-			userService.addRoleToUser("JohnTravolta", "ROLE_USER");
-			userService.addRoleToUser("WillSmith", "ROLE_USER");
-			userService.addRoleToUser("JimCarry", "ROLE_USER");
-			userService.addRoleToUser("ArnoldSchwarzenegger", "ROLE_USER");
+			// admin
+			userService.addRoleToUser("KanyeWest", "ROLE_ADMIN");
 		};
 	}
 

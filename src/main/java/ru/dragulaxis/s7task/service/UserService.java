@@ -21,6 +21,7 @@ import ru.dragulaxis.s7task.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -54,6 +55,10 @@ public class UserService implements UserDetailsService {
         log.info("Saving new user {} to the database", user.getUsername());
         // кодирование пароля
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // добавление роли user по умолчанию
+        HashSet<Role> roles = new HashSet<>();
+        roles.add(roleRepository.findByName("ROLE_USER"));
+        user.setRoles(roles);
         return userRepository.save(user);
     }
 
@@ -63,7 +68,6 @@ public class UserService implements UserDetailsService {
     }
 
     public void addRoleToUser(String username, String roleName) {
-        log.info("Saving role {} to user {}", roleName, username);
         User user = userRepository.findByUsername(username);
         Role role = roleRepository.findByName(roleName);
         user.getRoles().add(role);

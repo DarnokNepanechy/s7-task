@@ -5,12 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.dragulaxis.s7task.entity.Role;
 import ru.dragulaxis.s7task.entity.User;
 import ru.dragulaxis.s7task.service.UserService;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -20,12 +18,17 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok().body(userService.getAllUsers());
+    // авторизация пользователя - ALL
+    // по адресу /login
+
+    // регистрация нового пользователя - ALL
+    @PostMapping
+    public ResponseEntity<User> saveNewUser(@RequestBody User newUser) {
+        return ResponseEntity.ok().body(userService.saveUser(newUser));
     }
 
-    @GetMapping("/users/")
+    // получение списка имён всех пользователей - USER
+    @GetMapping(value = {"/users/", "/users"})
     public ResponseEntity<List<String>> getAllUsersName() {
         return ResponseEntity.ok().body(
                 userService.getAllUsers().stream()
@@ -34,6 +37,7 @@ public class UserController {
         );
     }
 
+    // получение списка имён пользователей по строке - USER
     @GetMapping("/users/{string}")
     public ResponseEntity<List<String>> getUsersByString(@PathVariable String string) {
         return ResponseEntity.ok().body(
@@ -44,36 +48,9 @@ public class UserController {
         );
     }
 
-    @PostMapping("/user/save")
-    public ResponseEntity<User> saveNewUser(@RequestBody User newUser) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/user/save").toUriString());
-        return ResponseEntity.created(uri).body(userService.saveUser(newUser));
-    }
-
-    @PutMapping("/user/{id}")
-    User replaceUser(@RequestBody User newUser, @PathVariable Long id) {
-        return userService.editUser(newUser, id);
-    }
-
-    @DeleteMapping("/user/{id}")
-    void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-    }
-
-    @PostMapping("/role/save")
-    public ResponseEntity<Role> saveNewRole(@RequestBody Role newRole) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/role/save").toUriString());
-        return ResponseEntity.created(uri).body(userService.saveRole(newRole));
-    }
-
-    @PostMapping("/role/add-to-user")
-    public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form) {
-        userService.addRoleToUser(form.getUsername(), form.getRoleName());
-        return ResponseEntity.ok().build();
-    }
-
+    // добавление пользователя в друзья - USER
     @Transactional
-    @PutMapping("users/friends/{username}")
+    @PutMapping("/user/friends/{username}")
     public boolean addUserToFriends(@PathVariable String username, @RequestHeader("Authorization") String token) {
         User user = userService.getUserFromToken(token);
         User friend = userService.getUser(username);
@@ -84,8 +61,9 @@ public class UserController {
         }
     }
 
+    // удаление пользователя из друзей - USER
     @Transactional
-    @DeleteMapping("users/friends/{username}")
+    @DeleteMapping("/user/friends/{username}")
     public boolean deleteUserToFriends(@PathVariable String username, @RequestHeader("Authorization") String token) {
         User user = userService.getUserFromToken(token);
         User friend = userService.getUser(username);
@@ -96,11 +74,42 @@ public class UserController {
         }
     }
 
-    @GetMapping("users/friends")
+    // получение списка своих друзей - USER
+    @GetMapping("/user/friends")
     public List<String> getAllFriends(@RequestHeader("Authorization") String token) {
         return userService.getUserFromToken(token).getFriends().stream().map(User::getUsername).toList();
     }
 
+    // получение списка пользователей со всей информацией - ADMIN
+    @GetMapping("/admin/users")
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok().body(userService.getAllUsers());
+    }
+
+    // редактирование пользователя - ADMIN
+    @PutMapping("/admin/user/{id}")
+    User replaceUser(@RequestBody User newUser, @PathVariable Long id) {
+        return userService.editUser(newUser, id);
+    }
+
+    // удаление пользователя - ADMIN
+    @DeleteMapping("/admin/user/{id}")
+    void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+    }
+
+    // добавление роли - ADMIN
+    @PostMapping("/admin/role/save")
+    public ResponseEntity<Role> saveNewRole(@RequestBody Role newRole) {
+        return ResponseEntity.ok().body(userService.saveRole(newRole));
+    }
+
+    // добавление роли к пользователю пользователя - ADMIN
+    @PostMapping("/admin/role/add-to-user")
+    public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form) {
+        userService.addRoleToUser(form.getUsername(), form.getRoleName());
+        return ResponseEntity.ok().build();
+    }
 }
 
 @Data
