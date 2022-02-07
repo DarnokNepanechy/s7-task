@@ -50,7 +50,7 @@
 > password: "vincent"  
 > role: ROLE_USER
 
-## Регистрация: ALL
+## Регистрация: ALL_USERS
 
 Чтобы зарегестрироваться в приложении, нужно отправить на адрес   
 `localhost:8092/api`  
@@ -62,7 +62,7 @@
 &emsp;&emsp;"password": "password"  
 }
 
-## Авторизация: ALL
+## Авторизация: ALL_USERS
 
 Чтобы авторизоваться в приложении, нужно отправить на адрес   
 `localhost:8092/api/login`  
