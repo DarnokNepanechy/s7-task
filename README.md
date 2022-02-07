@@ -61,8 +61,6 @@
 &emsp;&emsp;"password": "password"  
 }
 
-Форма запроса: `x-www-form-urlencoded`
-
 ## Авторизация: ALL_USERS
 
 Чтобы авторизоваться в приложении, нужно отправить на адрес   
