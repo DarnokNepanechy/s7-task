@@ -23,7 +23,7 @@ public class UserController {
 
     // регистрация нового пользователя - ALL
     @PostMapping
-    public ResponseEntity<User> saveNewUser(@RequestBody User newUser) {
+    public ResponseEntity<User> saveNewUser(User newUser) {
         return ResponseEntity.ok().body(userService.saveUser(newUser));
     }
 
