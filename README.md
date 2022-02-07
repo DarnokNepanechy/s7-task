@@ -79,7 +79,7 @@
 &emsp;&emsp;"access_token": "access_token"  
 }
 
-в последующих запросах его следует отправлять в **headers**:  
+в последующих запросах этот самый **access token** следует отправлять в **headers** в формате:  
 >Authorization:access_token
 
 ## Получение списка имён всех пользователей: ROLE_USER  
